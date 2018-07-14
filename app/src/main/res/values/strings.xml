@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Homework_5</string>
+    <string name="add">Add</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
+    <string name="dialogTitle">Add Contacts</string>
+    <string name="ErrorInfor"> Name or Phone is empty</string>
+    <string name="Delete">Delete</string>
+    <string name="dialogTitleItem">Update Contact</string>
+    <string name="Change">Change List View vs Recyclerview</string>
+</resources>
