@@ -1,4 +1,4 @@
-package com.vietdung.homework_5.Activity;
+package com.vietdung.homework_5.activity;
 
 import android.app.Dialog;
 import android.support.v4.app.FragmentManager;
@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -15,22 +14,20 @@ import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.vietdung.homework_5.Fragment.lvContactFragment;
-import com.vietdung.homework_5.Fragment.rlContactFragment;
-import com.vietdung.homework_5.Model.Contact;
+import com.vietdung.homework_5.database.DBContact;
+import com.vietdung.homework_5.fragment.LvContactFragment;
+import com.vietdung.homework_5.fragment.RvContactFragment;
+import com.vietdung.homework_5.model.Contact;
 import com.vietdung.homework_5.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     FrameLayout frameLayout;
     Button btn_Add;
     Switch swChange;
     FragmentManager fragmentManager;
     Dialog dialog;
-    public static String name,phone;
-    public static List<Contact> contactList;
+    public static String name, phone;
+    DBContact dbContact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,31 +36,28 @@ public class MainActivity extends AppCompatActivity  {
 
         initView();
         addEvents();
-        getData();
+        //getData();
     }
 
-
-
     private void addEvents() {
-        eventsSwitch();
         eventsClick();
-
+        eventsSwitch();
     }
 
     private void eventsSwitch() {
         swChange.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     FragmentTransaction tranrvContact = fragmentManager.beginTransaction();
-                    rlContactFragment rlContactFragment = new rlContactFragment();
-                    tranrvContact.replace(R.id.flFragment,rlContactFragment);
+                    RvContactFragment rlContactFragment = new RvContactFragment();
+                    tranrvContact.replace(R.id.flFragment, rlContactFragment);
                     tranrvContact.commit();
                 } else {
 
                     FragmentTransaction tranlvContact = fragmentManager.beginTransaction();
-                    lvContactFragment lvContactFragment = new lvContactFragment();
-                    tranlvContact.replace(R.id.flFragment,lvContactFragment);
+                    LvContactFragment lvContactFragment = new LvContactFragment();
+                    tranlvContact.replace(R.id.flFragment, lvContactFragment);
                     tranlvContact.commit();
                 }
             }
@@ -75,6 +69,7 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
                 showDialog();
+
             }
         });
 
@@ -101,13 +96,17 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
                 name = et_Name.getText().toString().trim();
-                phone= et_Phone.getText().toString().trim();
-                if(name.isEmpty() || phone.isEmpty()){
+                phone = et_Phone.getText().toString().trim();
+                if (name.isEmpty() || phone.isEmpty()) {
                     Toast.makeText(MainActivity.this, R.string.ErrorInfor, Toast.LENGTH_SHORT).show();
                     Log.d("name", name);
-                    Log.d("phone",phone);
-                }else{
-                    contactList.add(new Contact(name,phone));
+                    Log.d("phone", phone);
+                } else {
+                    Contact contact = new Contact();
+                    contact.setName(name);
+                    contact.setPhone(phone);
+                    dbContact.addContact(contact);
+                    eventsSwitch();
                     dialog.dismiss();
                 }
             }
@@ -119,23 +118,13 @@ public class MainActivity extends AppCompatActivity  {
         btn_Add = findViewById(R.id.btnAdd);
         swChange = findViewById(R.id.swChange);
         fragmentManager = getSupportFragmentManager();
-        if(contactList==null){
-            contactList =new ArrayList<>();
-        }
+        dbContact = new DBContact(getApplicationContext());
 
         FragmentTransaction tranlvContact = fragmentManager.beginTransaction();
-        lvContactFragment lvContactFragment = new lvContactFragment();
-        tranlvContact.replace(R.id.flFragment,lvContactFragment);
+        LvContactFragment lvContactFragment = new LvContactFragment();
+        tranlvContact.replace(R.id.flFragment, lvContactFragment);
         tranlvContact.commit();
     }
 
-
-    //Giả lập dữ liệu
-    private void getData() {
-        contactList.add(new Contact("Huy","0123456789"));
-        contactList.add(new Contact("Phong","22222222"));
-        contactList.add(new Contact("Long","11111111"));
-        contactList.add(new Contact("Nam","987654321"));
-    }
 }
 

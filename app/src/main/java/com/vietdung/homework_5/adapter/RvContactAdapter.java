@@ -1,4 +1,4 @@
-package com.vietdung.homework_5.Adapter;
+package com.vietdung.homework_5.adapter;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -12,28 +12,34 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.vietdung.homework_5.Activity.MainActivity;
-import com.vietdung.homework_5.Model.Contact;
+import com.vietdung.homework_5.database.DBContact;
+import com.vietdung.homework_5.fragment.RvContactFragment;
+import com.vietdung.homework_5.model.Contact;
 import com.vietdung.homework_5.R;
 
 import java.util.List;
 
-public class rlContactAdapter extends RecyclerView.Adapter<rlContactAdapter.RecyclerViewHolder> {
+public class RvContactAdapter extends RecyclerView.Adapter<RvContactAdapter.RecyclerViewHolder> {
 
-     List<Contact> contactList;
-     Dialog dialog;
+    List<Contact> contactList;
+    Dialog dialog;
+    DBContact dbContact;
     private Activity context;
+    RvContactFragment rvContactFragment;
 
-    public rlContactAdapter(Activity context,List<Contact> contactList) {
+    public RvContactAdapter(Activity context, List<Contact> contactList) {
         this.contactList = contactList;
         this.context = context;
+        dbContact = new DBContact(context);
+        rvContactFragment = new RvContactFragment();
+
     }
 
     @NonNull
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.custom_layout_contact,parent,false);
+        View view = inflater.inflate(R.layout.custom_layout_contact, parent, false);
         return new RecyclerViewHolder(view);
     }
 
@@ -50,17 +56,18 @@ public class rlContactAdapter extends RecyclerView.Adapter<rlContactAdapter.Recy
                 dialog.setContentView(R.layout.dialog_item);
                 dialog.setCanceledOnTouchOutside(false);
 
-                Button btn_Delete =dialog.findViewById(R.id.btnDelete);
+                Button btn_Delete = dialog.findViewById(R.id.btnDelete);
                 Button btn_Save = dialog.findViewById(R.id.btnSaveItem);
                 final EditText et_Name = dialog.findViewById(R.id.etNameItem);
                 final EditText et_Phone = dialog.findViewById(R.id.etPhoneItem);
-                et_Name.setText(MainActivity.contactList.get(position).getName());
-                et_Phone.setText(MainActivity.contactList.get(position).getPhone());
+                et_Name.setText(contactList.get(position).getName());
+                et_Phone.setText(contactList.get(position).getPhone());
 
                 btn_Delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        MainActivity.contactList.remove(position);
+                        dbContact.deleteContact(contactList.get(position));
+                        contactList.remove(position);
                         notifyDataSetChanged();
                         dialog.dismiss();
                     }
@@ -69,12 +76,13 @@ public class rlContactAdapter extends RecyclerView.Adapter<rlContactAdapter.Recy
                     @Override
                     public void onClick(View view) {
                         String name = et_Name.getText().toString().trim();
-                        String phone= et_Phone.getText().toString().trim();
-                        if(name.isEmpty() || phone.isEmpty()){
+                        String phone = et_Phone.getText().toString().trim();
+                        if (name.isEmpty() || phone.isEmpty()) {
                             Toast.makeText(context, R.string.ErrorInfor, Toast.LENGTH_SHORT).show();
-                        }else{
-                            MainActivity.contactList.get(position).setName(name);
-                            MainActivity.contactList.get(position).setPhone(phone);
+                        } else {
+                            contactList.get(position).setName(name);
+                            contactList.get(position).setPhone(phone);
+                            dbContact.Update(contactList.get(position));
                             notifyDataSetChanged();
                             dialog.dismiss();
                         }
@@ -92,10 +100,11 @@ public class rlContactAdapter extends RecyclerView.Adapter<rlContactAdapter.Recy
     }
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView tv_Name,tv_Phone;
+        TextView tv_Name, tv_Phone;
+
         public RecyclerViewHolder(View itemView) {
             super(itemView);
-            tv_Name =  itemView.findViewById(R.id.tvName);
+            tv_Name = itemView.findViewById(R.id.tvName);
             tv_Phone = itemView.findViewById(R.id.tvPhone);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
