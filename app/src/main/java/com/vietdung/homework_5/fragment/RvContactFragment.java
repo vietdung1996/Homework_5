@@ -42,7 +42,6 @@ public class RvContactFragment extends Fragment {
         rv_Contact.setAdapter(rlContactAdapter);
         rlContactAdapter.notifyDataSetChanged();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        // gridLayoutManager.setStackFromEnd(true);
         rv_Contact.setLayoutManager(gridLayoutManager);
     }
 }
