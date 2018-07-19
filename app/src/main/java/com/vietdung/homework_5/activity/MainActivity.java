@@ -1,33 +1,37 @@
 package com.vietdung.homework_5.activity;
 
 import android.app.Dialog;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.vietdung.homework_5.database.DBContact;
-import com.vietdung.homework_5.fragment.LvContactFragment;
-import com.vietdung.homework_5.fragment.RvContactFragment;
-import com.vietdung.homework_5.model.Contact;
 import com.vietdung.homework_5.R;
+import com.vietdung.homework_5.adapter.RvContactAdapter;
+import com.vietdung.homework_5.database.DBContact;
+import com.vietdung.homework_5.model.Contact;
+
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    FrameLayout frameLayout;
     Button btn_Add;
     Switch swChange;
-    FragmentManager fragmentManager;
+    RecyclerView rv_Contact;
     Dialog dialog;
     public static String name, phone;
     DBContact dbContact;
+    List<Contact> contactList;
+    RvContactAdapter rlContactAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         addEvents();
-        //getData();
+        showList();
     }
 
     private void addEvents() {
@@ -49,16 +53,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    FragmentTransaction tranrvContact = fragmentManager.beginTransaction();
-                    RvContactFragment rlContactFragment = new RvContactFragment();
-                    tranrvContact.replace(R.id.flFragment, rlContactFragment);
-                    tranrvContact.commit();
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
+                    rv_Contact.setLayoutManager(layoutManager);
+
                 } else {
 
-                    FragmentTransaction tranlvContact = fragmentManager.beginTransaction();
-                    LvContactFragment lvContactFragment = new LvContactFragment();
-                    tranlvContact.replace(R.id.flFragment, lvContactFragment);
-                    tranlvContact.commit();
+                    GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+                    rv_Contact.setLayoutManager(gridLayoutManager);
                 }
             }
         });
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     contact.setName(name);
                     contact.setPhone(phone);
                     dbContact.addContact(contact);
-                    eventsSwitch();
+                    showList();
                     dialog.dismiss();
                 }
             }
@@ -117,13 +118,20 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         btn_Add = findViewById(R.id.btnAdd);
         swChange = findViewById(R.id.swChange);
-        fragmentManager = getSupportFragmentManager();
+        rv_Contact = findViewById(R.id.rvContact);
         dbContact = new DBContact(getApplicationContext());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        rv_Contact.setLayoutManager(gridLayoutManager);
 
-        FragmentTransaction tranlvContact = fragmentManager.beginTransaction();
-        LvContactFragment lvContactFragment = new LvContactFragment();
-        tranlvContact.replace(R.id.flFragment, lvContactFragment);
-        tranlvContact.commit();
+
+    }
+
+    private void showList(){
+        contactList = dbContact.contactList();
+        Collections.reverse(contactList);
+        rlContactAdapter = new RvContactAdapter(MainActivity.this, contactList);
+        rlContactAdapter.notifyDataSetChanged();
+        rv_Contact.setAdapter(rlContactAdapter);
     }
 
 }

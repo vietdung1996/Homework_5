@@ -11,9 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.vietdung.homework_5.database.DBContact;
-import com.vietdung.homework_5.fragment.RvContactFragment;
 import com.vietdung.homework_5.model.Contact;
 import com.vietdung.homework_5.R;
 
@@ -25,13 +23,13 @@ public class RvContactAdapter extends RecyclerView.Adapter<RvContactAdapter.Recy
     Dialog dialog;
     DBContact dbContact;
     private Activity context;
-    RvContactFragment rvContactFragment;
+
 
     public RvContactAdapter(Activity context, List<Contact> contactList) {
         this.contactList = contactList;
         this.context = context;
         dbContact = new DBContact(context);
-        rvContactFragment = new RvContactFragment();
+
 
     }
 
