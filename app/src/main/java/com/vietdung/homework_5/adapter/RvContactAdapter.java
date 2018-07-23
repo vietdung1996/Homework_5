@@ -11,9 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.vietdung.homework_5.R;
 import com.vietdung.homework_5.database.DBContact;
 import com.vietdung.homework_5.model.Contact;
-import com.vietdung.homework_5.R;
 
 import java.util.List;
 

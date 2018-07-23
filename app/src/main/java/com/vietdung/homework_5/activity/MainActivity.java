@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.VERTICAL,false);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                     rv_Contact.setLayoutManager(layoutManager);
 
                 } else {
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showList(){
+    private void showList() {
         contactList = dbContact.contactList();
         Collections.reverse(contactList);
         rlContactAdapter = new RvContactAdapter(MainActivity.this, contactList);
